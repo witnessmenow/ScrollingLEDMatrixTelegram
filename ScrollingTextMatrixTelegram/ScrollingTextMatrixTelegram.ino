@@ -86,7 +86,7 @@ int delayBetweeenAnimations = 35; // How fast it scrolls, Smaller == faster
 int scrollXMove = -1; //If positive it would scroll right
 
 int textXPosition = dma_display.width(); // Will start one pixel off screen
-int textYPosition = dma_display.height() / 2 - (FONT_SIZE / 2); // This will center the text
+int textYPosition = dma_display.height() / 2 - (FONT_SIZE * 8 / 2); // This will center the text
 
 String text = "Hello Smarter Every Day!"; //Starting Text
 
@@ -159,7 +159,7 @@ void loop() {
     // The display has to do less updating if you only black out the area
     // the text is
     //dma_display.fillScreen(myBLACK);
-    dma_display.fillRect(0, textYPosition, dma_display.width(), FONT_SIZE * 2, myBLACK);
+    dma_display.fillRect(0, textYPosition, dma_display.width(), FONT_SIZE * 8, myBLACK);
 
     dma_display.print(text);
 
