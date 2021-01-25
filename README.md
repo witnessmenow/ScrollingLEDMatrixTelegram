@@ -3,7 +3,7 @@ Send messages to a LED Matrix display through Telegram. Inspired by a tweet from
 
 ## Parts
 
-To use this shield you will need the following additional things
+I used the following parts to build the project:
 
 - [ESP32 i2s Matrix Shield available on Tindie](https://www.tindie.com/products/brianlough/esp32-i2s-matrix-shield/) - This is not essential, you can use the wiring diagram [described here](https://github.com/mrfaptastic/ESP32-HUB75-MatrixPanel-I2S-DMA#wiring-esp32-with-the-led-matrix-panel)
 - ESP32 Mini32 Development board (ESP32 D1 Mini)
@@ -11,9 +11,10 @@ To use this shield you will need the following additional things
     - [Amazon.com\*](https://amzn.to/3gArkAY)
     - Also available as an add-on on the Tindie listing
 - 2 x RGB LED Matrix. 64x32 P3 Matrix display - [Aliexpress\*](https://s.click.aliexpress.com/e/_dYz5DLt)
-- [5V 8A laptop style power supply\*]( https://s.click.aliexpress.com/e/_d7uVLXt) - For this project you can just use a USB cable to power the displays.
 
 If you are not using my shield, you can use the method described in [step 5 of this post](https://www.instructables.com/RGB-LED-Matrix-With-an-ESP8266/) to power the panel.
+
+I also mention in the video about a bigger power supply, it's not important for this project as the scrolling text doesn't use much power (how many leds are on dictates how much power is used) but for other projects you would be safer to use one. This is the one I use: [5V 8A laptop style power supply\*]( https://s.click.aliexpress.com/e/_d7uVLXt)
 
 ## Instructions
 
