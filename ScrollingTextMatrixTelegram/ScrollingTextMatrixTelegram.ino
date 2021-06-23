@@ -122,6 +122,11 @@ void setup() {
   mxconfig.double_buff = true;
   mxconfig.gpio.e = 18;
 
+  // May or may not be needed depending on your matrix
+  // Example of what needing it looks like:
+  // https://github.com/mrfaptastic/ESP32-HUB75-MatrixPanel-I2S-DMA/issues/134#issuecomment-866367216
+  //mxconfig.clkphase = false;
+
   //mxconfig.driver = HUB75_I2S_CFG::FM6126A;
 
   // Display Setup
