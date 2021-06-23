@@ -68,10 +68,17 @@
 // Telegram BOT Token (Get from Botfather)
 #define BOT_TOKEN "XXXXXXXXX:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 
+// -------------------------------------
+// -------   Display Config   ------
+// -------------------------------------
+
+#define PANEL_RES_X 64      // Number of pixels wide of each INDIVIDUAL panel module. 
+#define PANEL_RES_Y 64     // Number of pixels tall of each INDIVIDUAL panel module.
+#define PANEL_CHAIN 1      // Total number of panels chained one to another
+
 //------- ---------------------- ------
 
-// True enables dubble buffer, this reduces flicker
-MatrixPanel_I2S_DMA dma_display(true);
+MatrixPanel_I2S_DMA *dma_display = nullptr;
 
 WiFiClientSecure secured_client;
 UniversalTelegramBot bot(BOT_TOKEN, secured_client);
@@ -85,8 +92,9 @@ UniversalTelegramBot bot(BOT_TOKEN, secured_client);
 int delayBetweeenAnimations = 35; // How fast it scrolls, Smaller == faster
 int scrollXMove = -1; //If positive it would scroll right
 
-int textXPosition = dma_display.width(); // Will start one pixel off screen
-int textYPosition = dma_display.height() / 2 - (FONT_SIZE * 8 / 2); // This will center the text
+int textXPosition = PANEL_RES_X * PANEL_CHAIN;    // Number of pixels wide of each INDIVIDUAL panel module.
+// Will start one pixel off screen
+int textYPosition = PANEL_RES_Y / 2 - (FONT_SIZE * 8 / 2); // This will center the text
 
 String text = "Hello Smarter Every Day!"; //Starting Text
 
@@ -95,23 +103,35 @@ String text = "Hello Smarter Every Day!"; //Starting Text
 // For scrolling Text
 unsigned long isAnimationDue;
 
-uint16_t myBLACK = dma_display.color565(0, 0, 0);
-uint16_t myWHITE = dma_display.color565(255, 255, 255);
-uint16_t myRED = dma_display.color565(255, 0, 0);
-uint16_t myGREEN = dma_display.color565(0, 255, 0);
-uint16_t myBLUE = dma_display.color565(0, 0, 255);
+uint16_t myBLACK = dma_display->color565(0, 0, 0);
+uint16_t myWHITE = dma_display->color565(255, 255, 255);
+uint16_t myRED = dma_display->color565(255, 0, 0);
+uint16_t myGREEN = dma_display->color565(0, 255, 0);
+uint16_t myBLUE = dma_display->color565(0, 0, 255);
 
 void setup() {
 
   Serial.begin(115200);
 
+  HUB75_I2S_CFG mxconfig(
+    PANEL_RES_X,   // module width
+    PANEL_RES_Y,   // module height
+    PANEL_CHAIN    // Chain length
+  );
+
+  mxconfig.double_buff = true;
+  mxconfig.gpio.e = 18;
+
+  //mxconfig.driver = HUB75_I2S_CFG::FM6126A;
+
   // Display Setup
-  dma_display.begin();
-  dma_display.fillScreen(myBLACK);
-  dma_display.showDMABuffer();
-  dma_display.setTextSize(FONT_SIZE);
-  dma_display.setTextWrap(false); // N.B!! Don't wrap at end of line
-  dma_display.setTextColor(myRED); // Can change the colour here
+  dma_display = new MatrixPanel_I2S_DMA(mxconfig);
+  dma_display->begin();
+  dma_display->fillScreen(myBLACK);
+  dma_display->showDMABuffer();
+  dma_display->setTextSize(FONT_SIZE);
+  dma_display->setTextWrap(false); // N.B!! Don't wrap at end of line
+  dma_display->setTextColor(myRED); // Can change the colour here
 
   // attempt to connect to Wifi network:
   Serial.print("Connecting to Wifi SSID ");
@@ -139,7 +159,7 @@ void loop() {
   if (now > isAnimationDue)
   {
     // This tells the code to update the second buffer
-    dma_display.flipDMABuffer();
+    dma_display->flipDMABuffer();
 
     // This sets the timer for when we should scroll again.
     isAnimationDue = now + delayBetweeenAnimations;
@@ -147,24 +167,24 @@ void loop() {
     textXPosition += scrollXMove;
 
     // Checking if the very right of the text off screen to the left
-    dma_display.getTextBounds(text, textXPosition, textYPosition, &xOne, &yOne, &w, &h);
+    dma_display->getTextBounds(text, textXPosition, textYPosition, &xOne, &yOne, &w, &h);
     if (textXPosition + w <= 0)
     {
       checkTelegram = true;
-      textXPosition = dma_display.width();
+      textXPosition = dma_display->width();
     }
 
-    dma_display.setCursor(textXPosition, textYPosition);
+    dma_display->setCursor(textXPosition, textYPosition);
 
     // The display has to do less updating if you only black out the area
     // the text is
-    //dma_display.fillScreen(myBLACK);
-    dma_display.fillRect(0, textYPosition, dma_display.width(), FONT_SIZE * 8, myBLACK);
+    //dma_display->fillScreen(myBLACK);
+    dma_display->fillRect(0, textYPosition, dma_display->width(), FONT_SIZE * 8, myBLACK);
 
-    dma_display.print(text);
+    dma_display->print(text);
 
     // This code swaps the second buffer to be visible (puts it on the display)
-    dma_display.showDMABuffer();
+    dma_display->showDMABuffer();
 
   }
 
